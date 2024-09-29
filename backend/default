@@ -1,0 +1,26 @@
+server {
+    listen 8080;
+    server_name backend.test.local; 
+
+    # Директория для статического контента
+    root /var/www/api;
+    index data.json;
+
+    # Указываем где будет происходить логирование
+    access_log /var/log/nginx/api_backend_access.log;
+    error_log /var/log/nginx/api_backend_error.log;
+
+    #Возврат статического содержимого на запросы к /api
+    location /api/ {
+        default_type application/json;
+        try_files /data.json =404;
+    }
+
+    # Обработчик ошибок
+    error_page 404 /404.json;
+    location = /404.json {
+        internal;
+        default_type application/json;
+        return 404 '{"error": "Ресурс не найден"}';
+    }
+}
